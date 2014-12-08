@@ -9,13 +9,6 @@ $("#post_btn").click(function(){
         alert("Message too long...");
         return;
     }
-    alert("Fuck me");
-    alert(JSON.stringify({user_id: user_id,
-                  message: message,
-                  longitude: LONGITUDE,
-                  latitude: LATITUDE,
-                  region_lon: calculateRegion(LONGITUDE),
-                  region_lat: calculateRegion(LATITUDE)}));
     $.ajax({
             url: "http://planetwalley.com/postit_test/post_at_location.php",
             async: false,

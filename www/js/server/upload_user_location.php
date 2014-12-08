@@ -50,6 +50,7 @@
         else{
         }
     }
+    $RESULT = array();
     // get other users data;
     $query_content = "SELECT * FROM user_location WHERE user_id<>'$user_id' 
                                                     and region_lon='$region_lon'
@@ -64,8 +65,28 @@
         while($v = mysqli_fetch_array($result, MYSQLI_NUM)){
             array_push($o, $v);
         }
-        echo json_encode($o);
+        array_push($RESULT, $o);
+        // echo json_encode($o);
     }
+
+    $query_content = "SELECT user_post.msg_id, user.username, user_post.message, user_post.longitude, user_post.latitude
+                      FROM user_post, user      WHERE user_post.user_id<>'$user_id'
+                                                      and user_post.region_lon='$region_lon'
+                                                      and user_post.region_lat='$region_lat'
+                                                      and user_post.user_id=user.user_id;";
+    $result = mysqli_query($cons, $query_content);
+    if(!$result){
+        echo "Failed";
+        exit;
+    }
+    else{
+        $o = array();
+        while($v = mysqli_fetch_array($result, MYSQLI_NUM)){
+            array_push($o, $v);
+        }
+        array_push($RESULT, $o);
+    }
+    echo json_encode($RESULT);
 
 
 ?>

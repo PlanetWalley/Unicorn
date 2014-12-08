@@ -47,7 +47,7 @@
             </ul>
         </div>
         <div data-role="footer" class="ui-bar" data-position="fixed" align="center" id="passby_page_footer">
-            <a id="go_post_page" href="#post_page">Post !</a>
+            <a id="go_post_page" href="#post_page" style="width:50%;">Post !</a>
         </div>
     </div>
     <!-- 下面的是显示用户profile -->
@@ -60,6 +60,9 @@
             <br>
             <br>
             <a style="text-decoration: none;" href="#passby_page" data-transition="slide" data-direction="reverse"> Back </a>
+            <ul data-role="listview" data-inset="true" id="profile_posts">
+
+            </ul>
         </div>
     </div>
     <div id="change_status" data-role="page">
@@ -77,13 +80,13 @@
     </div>
 
     <div data-role="page" id="post_page" style="width:100%; height: 100%;padding:0;">
-            <div id="googleMap" style="padding:0;">
-            </div>
-            <div style="position:absolute; top: 20px;">
-                <a data-rel="back" style="color:black;">Back</a>
-                <textarea id="post_textarea" placeholder="Leave message at your location"></textarea>
-                <a id="post_btn"  style="color:black;margin-left:50%;">Post!</a>
-            </div>
+        <div id="googleMap" style="padding:0;">
+        </div>
+        <div style="position:absolute; top: 20px;">
+            <a data-rel="back" style="color:black;">Back</a>
+            <textarea id="post_textarea" placeholder="Leave message at your location"></textarea>
+            <a id="post_btn" style="color:black;margin-left:50%;">Post!</a>
+        </div>
     </div>
 </body>
 
@@ -91,10 +94,12 @@
     var LATITUDE = null;
     var LONGITUDE = null;
     var passby_people = null;
+    var saved_posts_data = null;
     var data_fetched = true;
     var startGeolocation = null;
     var MAP = null;
     var USER_MARKER = null;
+    var calculateRegion = null;
     document.addEventListener("deviceready", function() {
         // Set user information...
         $("#user_id").html(window.localStorage["user_id"]);
@@ -109,16 +114,16 @@
             var mapProp = {
                 center: latlng,
                 zoom: 18,
-                draggable:false,
+                draggable: false,
                 scrollwheel: false,
-                disableDoubleClickZoom:true,
-                panControl:false,
-                zoomControl:false,
-                mapTypeControl:false,
-                scaleControl:false,
-                streetViewControl:false,
-                overviewMapControl:false,
-                rotateControl:false,
+                disableDoubleClickZoom: true,
+                panControl: false,
+                zoomControl: false,
+                mapTypeControl: false,
+                scaleControl: false,
+                streetViewControl: false,
+                overviewMapControl: false,
+                rotateControl: false,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
@@ -127,16 +132,15 @@
                 map: map,
                 title: "You are here"
             });
-            USER_MARKER = marker; 
+            USER_MARKER = marker;
             MAP = map;
             return map;
         }
 
-        var calculateRegion = function(degree) {
+        calculateRegion = function(degree) {
             return parseInt(degree * 100);
         }
         var calculateDistance = function(lon1, lat1, lon2, lat2) {
-            console.log(lon1 + " " + lat1 + " " + lon2 + " " + lat2);
             var R = 6371 * 1000; // m
             var phi1 = lat1 / 180 * Math.PI;
             var phi2 = lat2 / 180 * Math.PI
@@ -169,6 +173,25 @@
                  *
                  */
         passby_people = initPassbyPeopleData();
+        saved_posts_data = {}; // save post id
+        console.log("ENTER HERE");
+        // get user posts 
+        $.ajax({
+            url: "http://planetwalley.com/postit_test/get_user_posts.php",
+            //async: false,
+            type: "POST",
+            // 下面是发送的信息
+            data: {
+                user_id: window.localStorage["user_id"]
+            }
+        }).done(function(data) {
+            console.log("GET USER POSTS");
+            console.log(data);
+        }).fail(function(data) {
+            alert(data);
+        });
+
+
         $('ul').listview().listview('refresh');
 
         var showPosition = function(position) {
@@ -176,11 +199,10 @@
             var longitude = position.coords.longitude;
             var latitude = position.coords.latitude;
 
-            if(MAP == null){
+            if (MAP == null) {
                 MAP = 1;
                 MAP = initializeMap(longitude, latitude);
-            }
-            else{
+            } else {
                 var latlng = new google.maps.LatLng(latitude, longitude);
                 MAP.setCenter(latlng);
                 USER_MARKER.setPosition(latlng);
@@ -253,6 +275,10 @@
                          */
                         // calculate distance
                         data = JSON.parse(data);
+                        posts_data = data[1];
+                        status_data = data[0];
+                        console.log(posts_data);
+                        console.log(status_data);
                         var time = new Date();
                         var year = time.getFullYear();
                         var month = time.getMonth();
@@ -265,13 +291,13 @@
                         if (device.platform === "android") { // below is to run android code
                             alert("Android")
                             var pass_data = [1, window.localStorage["user_id"], LONGITUDE, LATITUDE]; // ["data_num", "user_id", longitude, latitude, "user_id", longitude, latitude ... ]
-                            for (var i = 0; i < data.length; i++) {
-                                var id = data[i][0];
+                            for (var i = 0; i < status_data.length; i++) {
+                                var id = status_data[i][0];
                                 if (id in passby_people[date_string]) continue; // already exist
                                 else {
                                     pass_data.push(id);
-                                    pass_data.push(data[i][1]);
-                                    pass_data.push(data[i][2]);
+                                    pass_data.push(status_data[i][1]);
+                                    pass_data.push(status_data[i][2]);
                                     (pass_data[0])++; // increase data num
                                 }
                             }
@@ -303,7 +329,7 @@
                                                 passby_people[date_string][id] = passby_user_status;
 
                                                 // add to list
-                                                var content = "<li><h2>擦肩:" + passby_username + "</h2>" +
+                                                var content = "<li><h2>Passby: " + passby_username + "</h2>" +
                                                     "<p>" + passby_user_status + "</p></li>";
                                                 $("#passby_people_list").prepend(content);
                                             }
@@ -320,11 +346,11 @@
                                 pass_data
                             )
                         } else {
-                            for (var i = 0; i < data.length; i++) {
-                                var id = data[i][0];
+                            for (var i = 0; i < status_data.length; i++) {
+                                var id = status_data[i][0];
                                 if (id in passby_people[date_string]) continue; // already exist
-                                var distance = calculateDistance(LONGITUDE, LATITUDE, parseFloat(data[i][1]), parseFloat(data[i][2]));
-                                console.log("User: " + data[i][0] + " distance: " + distance + "m");
+                                var distance = calculateDistance(LONGITUDE, LATITUDE, parseFloat(status_data[i][1]), parseFloat(status_data[i][2]));
+                                console.log("User: " + status_data[i][0] + " distance: " + distance + "m");
                                 $("#distance").html(distance);
                                 if (distance <= 90) { // distance threshold
                                     //console.log("year: " + year + " month: " + month + " date: " + date);
@@ -352,7 +378,7 @@
                                             passby_people[date_string][id] = passby_user_status;
 
                                             // add to list
-                                            var content = "<li><h2>擦肩:" + passby_username + "</h2>" +
+                                            var content = "<li><h2>Passby: " + passby_username + "</h2>" +
                                                 "<p>" + passby_user_status + "</p></li>";
                                             $("#passby_people_list").prepend(content);
                                         }
@@ -362,9 +388,27 @@
                                 }
                             }
                         }
-                        // refresh listview
-                        $('ul').listview('refresh');
                     }
+
+                    // show posts data 
+                    for (var i = 0; i < posts_data.length; i++) {
+                        var v = posts_data[i];
+                        var msg_id = v[0];
+                        var p_username = v[1];
+                        if (msg_id in saved_posts_data) continue;
+                        var message = v[2];
+                        var distance = calculateDistance(LONGITUDE, LATITUDE, parseFloat(v[3]), parseFloat(v[4]));
+                        if (distance <= 100) {
+                            saved_posts_data[msg_id] = 1;
+                            // add to list
+                            var content = "<li><h2>Message: " + p_username + "</h2>" +
+                                "<p>" + message + "</p></li>";
+                            $("#passby_people_list").prepend(content);
+                        }
+                    }
+                    // refresh listview
+                    $('ul').listview('refresh');
+
                     $("#data").html(JSON.stringify(passby_people));
                     data_fetched = true;
                 }).fail(function(data) {
