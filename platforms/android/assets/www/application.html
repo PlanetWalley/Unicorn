@@ -60,9 +60,11 @@
             <br>
             <br>
             <a style="text-decoration: none;" href="#passby_page" data-transition="slide" data-direction="reverse"> Back </a>
+            
+            
             <ul data-role="listview" data-inset="true" id="profile_posts">
-
             </ul>
+
         </div>
     </div>
     <div id="change_status" data-role="page">
@@ -175,10 +177,12 @@
         passby_people = initPassbyPeopleData();
         saved_posts_data = {}; // save post id
         console.log("ENTER HERE");
+        
+        alert("HERE");
         // get user posts 
         $.ajax({
             url: "http://planetwalley.com/postit_test/get_user_posts.php",
-            //async: false,
+            async: false,
             type: "POST",
             // 下面是发送的信息
             data: {
@@ -190,9 +194,6 @@
         }).fail(function(data) {
             alert(data);
         });
-
-
-        $('ul').listview().listview('refresh');
 
         var showPosition = function(position) {
             console.log(position);
@@ -407,7 +408,7 @@
                         }
                     }
                     // refresh listview
-                    $('ul').listview('refresh');
+                    $('#passby_people_list').listview('refresh');
 
                     $("#data").html(JSON.stringify(passby_people));
                     data_fetched = true;

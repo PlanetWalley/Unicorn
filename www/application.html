@@ -60,8 +60,8 @@
             <br>
             <br>
             <a style="text-decoration: none;" href="#passby_page" data-transition="slide" data-direction="reverse"> Back </a>
-            
-            
+
+
             <ul data-role="listview" data-inset="true" id="profile_posts">
             </ul>
 
@@ -176,9 +176,7 @@
                  */
         passby_people = initPassbyPeopleData();
         saved_posts_data = {}; // save post id
-        console.log("ENTER HERE");
-        /*
-        alert("HERE");
+        
         // get user posts 
         $.ajax({
             url: "http://planetwalley.com/postit_test/get_user_posts.php",
@@ -189,12 +187,17 @@
                 user_id: window.localStorage["user_id"]
             }
         }).done(function(data) {
-            console.log("GET USER POSTS");
-            console.log(data);
+            data = JSON.parse(data);
+            for (var i = 0; i < data.length; i++) {
+                var msg = data[i][0];
+                // add to list
+                var content = "<li><p>"+msg+"</p></li>";
+                $("#profile_posts").prepend(content);
+            }
+            $("#profile_posts").listview().listview("refresh");
         }).fail(function(data) {
             alert(data);
-        });*/
-        //$('ul').listview().listview('refresh');
+        });
 
         var showPosition = function(position) {
             console.log(position);

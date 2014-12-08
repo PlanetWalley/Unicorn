@@ -27,6 +27,9 @@ $("#post_btn").click(function(){
             }
             else if (data === "Success"){
                 alert("Message Posted");
+                var content = "<li><p>"+message+"</p></li>";
+                $("#profile_posts").prepend(content);
+                $("#profile_posts").listview("refresh");
             }
             else{
                 alert("Failed to post status\nPlease try later");
