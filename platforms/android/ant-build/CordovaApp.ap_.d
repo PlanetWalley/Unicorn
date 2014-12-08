@@ -35,6 +35,7 @@
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/pages \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/plugins \
+/Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/post.html \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/res \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/spec \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/spec.html \
@@ -44,12 +45,15 @@
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/index.js \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/init_passby_people_data.js \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/login.js \
+/Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/post_at_location.js \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/server \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/signup.js \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/server/change_status.php \
+/Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/server/get_user_posts.php \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/server/init_passby.php \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/server/login.php \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/server/passby.php \
+/Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/server/post_at_location.php \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/server/signup.php \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/js/server/upload_user_location.php \
 /Applications/XAMPP/xamppfiles/htdocs/xampp/PostIt_test/Unicorn/platforms/android/assets/www/pages/app.html \

@@ -33,10 +33,10 @@
     <div data-role="page" id="passby_page">
         <div data-role="main" class="ui-content">
             <p id="user_id" style="display:none;">Hello There</p>
-            <p id="longitude">Longitude</p>
-            <p id="latitude">Latitude</p>
+            <p id="longitude" style="display:none;">Longitude</p>
+            <p id="latitude" style="display:none;">Latitude</p>
             <p id="distance" style="display:none;">NULL</p>
-            <p id="data">NULL</p>
+            <p id="data"  style="display:none;">NULL</p>
             <p id="count" style="display:none;">0</p>
             <a href="#profile_page" data-transition="slide" id="username" style="text-decoration: none; font-size:70;"></a>
             <ul data-role="listview" data-inset="true" id="passby_people_list">
@@ -60,8 +60,8 @@
             <br>
             <br>
             <a style="text-decoration: none;" href="#passby_page" data-transition="slide" data-direction="reverse"> Back </a>
-            
-            
+
+
             <ul data-role="listview" data-inset="true" id="profile_posts">
             </ul>
 
@@ -176,9 +176,7 @@
                  */
         passby_people = initPassbyPeopleData();
         saved_posts_data = {}; // save post id
-        console.log("ENTER HERE");
         
-        alert("HERE");
         // get user posts 
         $.ajax({
             url: "http://planetwalley.com/postit_test/get_user_posts.php",
@@ -189,8 +187,14 @@
                 user_id: window.localStorage["user_id"]
             }
         }).done(function(data) {
-            console.log("GET USER POSTS");
-            console.log(data);
+            data = JSON.parse(data);
+            for (var i = 0; i < data.length; i++) {
+                var msg = data[i][0];
+                // add to list
+                var content = "<li><p>"+msg+"</p></li>";
+                $("#profile_posts").prepend(content);
+            }
+            $("#profile_posts").listview().listview("refresh");
         }).fail(function(data) {
             alert(data);
         });
@@ -289,7 +293,7 @@
                             passby_people[date_string] = {};
                         }
                         console.log("Now check user: " + window.localStorage["username"] + " " + window.localStorage["user_id"]);
-                        if (device.platform === "android") { // below is to run android code
+                        if (device.platform === "Android") { // below is to run android code
                             alert("Android")
                             var pass_data = [1, window.localStorage["user_id"], LONGITUDE, LATITUDE]; // ["data_num", "user_id", longitude, latitude, "user_id", longitude, latitude ... ]
                             for (var i = 0; i < status_data.length; i++) {
@@ -304,6 +308,7 @@
                             }
 
                             cordova.exec(function(data) {
+                                    alert(data);
                                     // alert(data + "   type: " + typeof(data) + " " + data.length);
                                     var users_id = data; //JSON.parse(data);
                                     // alert(users_id.length);

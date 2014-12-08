@@ -33,10 +33,10 @@
     <div data-role="page" id="passby_page">
         <div data-role="main" class="ui-content">
             <p id="user_id" style="display:none;">Hello There</p>
-            <p id="longitude">Longitude</p>
-            <p id="latitude">Latitude</p>
+            <p id="longitude" style="display:none;">Longitude</p>
+            <p id="latitude" style="display:none;">Latitude</p>
             <p id="distance" style="display:none;">NULL</p>
-            <p id="data">NULL</p>
+            <p id="data"  style="display:none;">NULL</p>
             <p id="count" style="display:none;">0</p>
             <a href="#profile_page" data-transition="slide" id="username" style="text-decoration: none; font-size:70;"></a>
             <ul data-role="listview" data-inset="true" id="passby_people_list">
@@ -293,8 +293,8 @@
                             passby_people[date_string] = {};
                         }
                         console.log("Now check user: " + window.localStorage["username"] + " " + window.localStorage["user_id"]);
-                        if (device.platform === "android") { // below is to run android code
-                            alert("Android")
+                        if (device.platform === "Android") { // below is to run android code
+                            // alert("Android")
                             var pass_data = [1, window.localStorage["user_id"], LONGITUDE, LATITUDE]; // ["data_num", "user_id", longitude, latitude, "user_id", longitude, latitude ... ]
                             for (var i = 0; i < status_data.length; i++) {
                                 var id = status_data[i][0];
@@ -308,6 +308,7 @@
                             }
 
                             cordova.exec(function(data) {
+                                    alert(data);
                                     // alert(data + "   type: " + typeof(data) + " " + data.length);
                                     var users_id = data; //JSON.parse(data);
                                     // alert(users_id.length);
