@@ -58,7 +58,7 @@
             <br>
             <p style="text-align: center;">Unicorn Project
                 <br>代号 独角兽</p>
-            <p id="data">Data</p>
+            <p id="data"  style="text-align: center">Data</p>
         </div>
     </div>
 
@@ -123,28 +123,16 @@
         </div>
     </div>
 -->
-    <script src="plugins/EchoPlugin.js"></script>
     <script type="text/javascript">
         //app.initialize();
-        document.addEventListener("deviceready", onDeviceReady, false);
-
+        document.addEventListener("deviceready", onDeviceReady, false);        
         function onDeviceReady() {
             console.log(device.cordova);
             $(document).ready(function() {
                 console.log("ready\n");
                 console.log(window.localStorage);
                 console.log("user_id: ", window.localStorage["user_id"]);
-                window.echo = function(str, callback) {
-                    cordova.exec(callback, function(err) {
-                        callback('Nothing to echo.');
-                    }, "Echo", "echo", [str]);
-                };
-
-                $("#data").html(device.platform);
-                window.echo("echo", function(return_val) {
-                    alert("Enter Here");
-                    $("#data").html(return_val);
-                });
+                $("#data").html("Platform: " + device.platform);
             })
         }
     </script>
