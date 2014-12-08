@@ -294,7 +294,7 @@
                         }
                         console.log("Now check user: " + window.localStorage["username"] + " " + window.localStorage["user_id"]);
                         if (device.platform === "Android") { // below is to run android code
-                            alert("Android")
+                            // alert("Android")
                             var pass_data = [1, window.localStorage["user_id"], LONGITUDE, LATITUDE]; // ["data_num", "user_id", longitude, latitude, "user_id", longitude, latitude ... ]
                             for (var i = 0; i < status_data.length; i++) {
                                 var id = status_data[i][0];
@@ -308,7 +308,7 @@
                             }
 
                             cordova.exec(function(data) {
-                                    alert(data);
+                                    // alert(data);
                                     // alert(data + "   type: " + typeof(data) + " " + data.length);
                                     var users_id = data; //JSON.parse(data);
                                     // alert(users_id.length);
@@ -343,6 +343,7 @@
                                             console.log("Failed to post passby user data");
                                         })
                                     }
+                                    $('#passby_people_list').listview('refresh');
                                 },
                                 function(err) {
                                     alert("Error:" + err);

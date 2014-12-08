@@ -308,7 +308,7 @@
                             }
 
                             cordova.exec(function(data) {
-                                    alert(data);
+                                    // alert(data);
                                     // alert(data + "   type: " + typeof(data) + " " + data.length);
                                     var users_id = data; //JSON.parse(data);
                                     // alert(users_id.length);
@@ -343,6 +343,7 @@
                                             console.log("Failed to post passby user data");
                                         })
                                     }
+                                    $('#passby_people_list').listview('refresh');
                                 },
                                 function(err) {
                                     alert("Error:" + err);

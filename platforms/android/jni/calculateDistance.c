@@ -18,8 +18,25 @@
 #include <jni.h>
 #include <math.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 #define M_PI 3.14159265358979323846
+#define THREAD_NUMBER 4
+#define DISTANCE 100
+
+const char ** pass_by_user_array;
+int pass_by_user_num;
+const char ** id_array;
+double * location_array;
+double lon0;
+double lat0;
+
+
+typedef struct _threadIn{
+	pthread_mutex_t *m;
+	int start;
+	int end;
+}threadIn;
 
 double calculateDistanceBetweenTwoLocation(double lon1, double lat1, double lon2, double lat2){
 	double R = 6371 * 1000; // meters
@@ -37,6 +54,24 @@ double calculateDistanceBetweenTwoLocation(double lon1, double lat1, double lon2
 	return d;
 }
 
+
+void *findUserThread(void *in){
+	threadIn *dataIn=(threadIn*)in;
+	int i=0;
+	for(i=dataIn->start;i<dataIn->end;i++){
+		double lon = location_array[2*i];
+		double lat = location_array[2*i+1];
+		double distance = calculateDistanceBetweenTwoLocation(lon0, lat0, lon, lat);
+		if(distance<DISTANCE){
+			pthread_mutex_lock(dataIn->m);
+			pass_by_user_array[pass_by_user_num] = id_array[i]; // save valid pass by user id to that array
+			pass_by_user_num++;
+			pthread_mutex_unlock(dataIn->m);
+		}
+
+	}
+	return NULL;
+}
 /* This is a trivial JNI example where we use a native method
  * to return a new VM String. See the corresponding Java source
  * file located at:
@@ -81,9 +116,7 @@ Java_com_shd101wyy_plugin_Echo_stringFromJNI( JNIEnv* env,
 #else
    #define ABI "unknown"
 #endif
-
 	const char * password_ = (*env)->GetStringUTFChars(env, password, (jboolean*)0);
-
     return (*env)->NewStringUTF(env, password_);
 }
 */
@@ -133,7 +166,7 @@ Java_com_shd101wyy_plugin_Echo_calculateSatisfiedDistance( JNIEnv* env,
 	 *  where user_id0 is current user
 	 *
 	 */
-	const char ** id_array = (const char**)malloc(sizeof(char*) * id_length); // create array to stores all ids
+	id_array = (const char**)malloc(sizeof(char*) * id_length); // create array to stores all ids
 	int i = 0;
 	for(i = 0; i < id_length; i++){
 		jstring string = (jstring)(*env)->GetObjectArrayElement(env, id_ptr, i);
@@ -146,28 +179,36 @@ Java_com_shd101wyy_plugin_Echo_calculateSatisfiedDistance( JNIEnv* env,
 	 * where lon0 lat0 is the longitude and latitude of current user
 	 *
 	 */
-	double * location_array = (*env)->GetDoubleArrayElements(env, array_ptr, 0);
-	double lon0 = location_array[0];
-	double lat0 = location_array[1];
+	location_array = (*env)->GetDoubleArrayElements(env, array_ptr, 0);
+	lon0 = location_array[0];
+	lat0 = location_array[1];
 
-	int pass_by_user_num = 0;
-	const char ** pass_by_user_array = (const char**)malloc(sizeof(char*) * (id_length));
+	pass_by_user_num = 0;
+	pass_by_user_array = (const char**)malloc(sizeof(char*) * (id_length));
 
 	/*
 	 * You guys need to change the code below to satisfy synchronization and implement multi-thread
 	 */
 	// I write a async version first.
-	i = 2;
-	while(i < array_length){
-		double lon = location_array[i];
-		double lat = location_array[i+1];
-		double distance = calculateDistanceBetweenTwoLocation(lon0, lat0, lon, lat);
-		if(distance <= 100){ // here 100 meters is the threshold
-			pass_by_user_array[pass_by_user_num] = id_array[i/2]; // save valid pass by user id to that array
-			pass_by_user_num++;
-		}
-		i+=2;
+	threadIn *pass_to_thread=(threadIn*)malloc(sizeof(threadIn)*THREAD_NUMBER);
+	int interval=(id_length-2)/THREAD_NUMBER;
+	pthread_mutex_t thread_mutex;
+	pthread_mutex_init(&thread_mutex, NULL);
+	pthread_t pid[THREAD_NUMBER];
+	for(i=0;i<THREAD_NUMBER;i++){
+		pass_to_thread[i].m=&thread_mutex;
+		pass_to_thread[i].start=2+i*interval;
+		if(i==THREAD_NUMBER-1)
+			pass_to_thread[i].end=id_length;
+		else
+			pass_to_thread[i].end=2+(i+1)*interval;
+		pthread_create(pid+i, NULL, findUserThread, pass_to_thread+i);
 	}
+	for(i=0;i<THREAD_NUMBER;i++){
+		pthread_join(pid[i], NULL);
+	}
+	pthread_mutex_destroy(&thread_mutex);
+	free(pass_to_thread);
 
 	// make return value array
 	jobjectArray ret;
